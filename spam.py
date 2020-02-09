@@ -95,7 +95,7 @@ def buka():
                 time.sleep(int(dl))
                 j -=- 1
    print BL + '═' *35
-   print '\x1b[37;1mSUCCES : ' + GL + str(h) + W + " FAILED : " + R + str(j)
+   print '\x1b[37;1mSUCCES : ' + GL + str(j) + W + " FAILED : " + R + str(h)
    print BL + '═' *35 + W
 
 def tri():
