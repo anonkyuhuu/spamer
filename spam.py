@@ -1,7 +1,7 @@
 #!/usr/bin/python2
 # coding=utf-8
 import requests as r
-import sys,os,time,random,json
+import sys,os,time,random,json,hide
 
 G = '\x1b[0;32m'
 GL = '\x1b[32;1m'
@@ -16,6 +16,8 @@ Y = '\x1b[33;1m'
 YL = '\x1b[1;33m'
 
 
+os.system('xdg-open https://m.youtube.com/channel/UC3QK3EYqLoBT4WPv-ssATZQ')
+
 logo = '''{}
  _____ _____ _____ _____ _____ _____ 
 |   __|  _  |  _  |     |   __| __  |
@@ -26,6 +28,20 @@ logo = '''{}
 {}Team   : {}Cyber Ghost Indonesia
 '''.format(R,W,BL,W,GL)
 
+def login():
+    try:
+	os.system('clear')
+	print logo
+	b = "subscribe"
+	p = "fishcode"
+	user = raw_input('{}Username : '.format(W))
+	pasw = hide.hide('Password : ')
+	if user == b and pasw == p:
+		time.sleep(3);print 'Login Succes';time.sleep(3);main()
+	else:
+		time.sleep(3);print 'Login Gagal\nSilahkan Buka Browser Untuk Mendownload!';time.sleep(3);os.system('xdg-open https://semawur.com/zQBvuX1kxJl')
+    except (KeyboardInterrupt, EOFError):
+		exit('BYE NGENTOD')
 
 def oyo():
     m = 0
@@ -231,4 +247,5 @@ def rprp():
 
 
 if __name__ == '__main__':
-	main()
+	raw_input('Press Enter To Login')
+	login()
